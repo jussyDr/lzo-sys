@@ -45,7 +45,7 @@ pub fn compress_level<'a>(
             &mut dst_len,
             wrkmem.as_mut_ptr() as *mut core::ffi::c_void,
             dict.as_mut_ptr(),
-            dict.len() as core::ffi::c_longlong,
+            dict.len() as core::ffi::c_ulonglong,
             null_mut(),
             level,
         )
