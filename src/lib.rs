@@ -15,6 +15,16 @@ pub mod lzo2a;
 #[derive(Debug)]
 pub struct Error;
 
+macro_rules! default_worst_compress_size_impl {
+    ($name:ident) => {
+        pub const fn $name(src_len: usize) -> usize {
+            src_len + (src_len / 16) + 64 + 3
+        }
+    };
+}
+
+use default_worst_compress_size_impl;
+
 macro_rules! default_compress_impl {
     ($name:ident, $sys_name:ident, $mem_size:expr) => {
         pub fn $name<'a>(src: &[u8], dst: &'a mut [u8]) -> Result<&'a mut [u8], crate::Error> {

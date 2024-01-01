@@ -2,6 +2,7 @@ use core::ffi::{c_int, c_ulonglong, c_void};
 
 use crate::{
     default_compress_impl, default_safe_decompress_impl, default_unsafe_decompress_impl,
+    default_worst_compress_size_impl,
     sys::{
         lzo1c_1_compress, lzo1c_2_compress, lzo1c_3_compress, lzo1c_4_compress, lzo1c_5_compress,
         lzo1c_6_compress, lzo1c_7_compress, lzo1c_8_compress, lzo1c_999_compress,
@@ -10,6 +11,8 @@ use crate::{
     },
     Error,
 };
+
+default_worst_compress_size_impl!(worst_compress_size);
 
 pub fn compress<'a>(src: &[u8], dst: &'a mut [u8], level: c_int) -> Result<&'a mut [u8], Error> {
     let mut dst_len = dst.len() as c_ulonglong;

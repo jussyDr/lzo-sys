@@ -1,10 +1,13 @@
 use crate::{
     default_compress_impl, default_safe_decompress_impl, default_unsafe_decompress_impl,
+    default_worst_compress_size_impl,
     sys::{
         lzo1f_1_compress, lzo1f_999_compress, lzo1f_decompress, lzo1f_decompress_safe,
         LZO1F_999_MEM_COMPRESS, LZO1F_MEM_COMPRESS,
     },
 };
+
+default_worst_compress_size_impl!(worst_compress_size);
 
 default_unsafe_decompress_impl!(decompress, lzo1f_decompress);
 
