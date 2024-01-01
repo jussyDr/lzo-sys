@@ -22,4 +22,4 @@ default_compress_impl!(compress_1_15, lzo1x_1_15_compress, LZO1X_1_15_MEM_COMPRE
 
 default_compress_impl!(compress_999, lzo1x_999_compress, LZO1X_999_MEM_COMPRESS);
 
-default_safe_decompress_impl!(optimize, lzo1x_optimize);
+default_unsafe_decompress_impl!(optimize, lzo1x_optimize);
