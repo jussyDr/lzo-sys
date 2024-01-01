@@ -31,6 +31,7 @@ default_compress_impl!(compress_999, lzo1x_999_compress, LZO1X_999_MEM_COMPRESS)
 pub fn compress_level<'a>(
     src: &[u8],
     dst: &'a mut [u8],
+    dict: &mut [u8],
     level: c_int,
 ) -> Result<&'a mut [u8], crate::Error> {
     let mut dst_len = dst.len() as core::ffi::c_ulonglong;
@@ -43,8 +44,8 @@ pub fn compress_level<'a>(
             dst.as_mut_ptr(),
             &mut dst_len,
             wrkmem.as_mut_ptr() as *mut core::ffi::c_void,
-            null_mut(),
-            0,
+            dict.as_mut_ptr(),
+            dict.len() as core::ffi::c_longlong,
             null_mut(),
             level,
         )
