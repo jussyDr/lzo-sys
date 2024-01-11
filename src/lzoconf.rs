@@ -11,33 +11,33 @@ pub const LZO_VERSION_DATE: *const c_char = "Mar 01 2017\0".as_ptr() as *const c
 
 pub type lzo_compress_t = unsafe extern "C" fn(
     src: *const core::ffi::c_uchar,
-    src_len: core::ffi::c_ulonglong,
+    src_len: usize,
     dst: *mut core::ffi::c_uchar,
-    dst_len: *mut core::ffi::c_ulonglong,
+    dst_len: *mut usize,
     wrkmem: *mut core::ffi::c_void,
 ) -> core::ffi::c_int;
 
 pub type lzo_decompress_t = unsafe extern "C" fn(
     src: *const core::ffi::c_uchar,
-    src_len: core::ffi::c_ulonglong,
+    src_len: usize,
     dst: *mut core::ffi::c_uchar,
-    dst_len: *mut core::ffi::c_ulonglong,
+    dst_len: *mut usize,
     wrkmem: *mut core::ffi::c_void,
 ) -> core::ffi::c_int;
 
 pub type lzo_optimize_t = unsafe extern "C" fn(
     src: *const core::ffi::c_uchar,
-    src_len: core::ffi::c_ulonglong,
+    src_len: usize,
     dst: *mut core::ffi::c_uchar,
-    dst_len: *mut core::ffi::c_ulonglong,
+    dst_len: *mut usize,
     wrkmem: *mut core::ffi::c_void,
 ) -> core::ffi::c_int;
 
 pub type lzo_compress_dict_t = unsafe extern "C" fn(
     src: *const core::ffi::c_uchar,
-    src_len: core::ffi::c_ulonglong,
+    src_len: usize,
     dst: *mut core::ffi::c_uchar,
-    dst_len: *mut core::ffi::c_ulonglong,
+    dst_len: *mut usize,
     wrkmem: *mut core::ffi::c_void,
     dict: *const core::ffi::c_uchar,
     dict_len: usize,
@@ -45,9 +45,9 @@ pub type lzo_compress_dict_t = unsafe extern "C" fn(
 
 pub type lzo_decompress_dict_t = unsafe extern "C" fn(
     src: *const core::ffi::c_uchar,
-    src_len: core::ffi::c_ulonglong,
+    src_len: usize,
     dst: *mut core::ffi::c_uchar,
-    dst_len: *mut core::ffi::c_ulonglong,
+    dst_len: *mut usize,
     wrkmem: *mut core::ffi::c_void,
     dict: *const core::ffi::c_uchar,
     dict_len: usize,
