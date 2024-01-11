@@ -3,7 +3,7 @@ use core::{
     mem::size_of,
 };
 
-use super::{lzo_999_func_decls, lzo_func_decl};
+use super::{lzo_999_func_decls, lzo_func_decl, lzo_optimize_func_decl};
 
 pub const LZO1Y_MEM_COMPRESS: u32 = 16384 * size_of::<*mut c_uchar>() as u32;
 
@@ -28,5 +28,5 @@ extern "C" {
         lzo1y_999_compress_dict_safe
     );
 
-    lzo_func_decl!(lzo1y_optimize);
+    lzo_optimize_func_decl!(lzo1y_optimize);
 }

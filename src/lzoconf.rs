@@ -26,7 +26,7 @@ pub type lzo_decompress_t = unsafe extern "C" fn(
 ) -> core::ffi::c_int;
 
 pub type lzo_optimize_t = unsafe extern "C" fn(
-    src: *const core::ffi::c_uchar,
+    src: *mut core::ffi::c_uchar,
     src_len: usize,
     dst: *mut core::ffi::c_uchar,
     dst_len: *mut usize,

@@ -82,3 +82,17 @@ macro_rules! lzo_999_func_decls {
 }
 
 use lzo_999_func_decls;
+
+macro_rules! lzo_optimize_func_decl {
+    ($name:ident) => {
+        pub fn $name(
+            src: *mut core::ffi::c_uchar,
+            src_len: usize,
+            dst: *mut core::ffi::c_uchar,
+            dst_len: *mut usize,
+            wrkmem: *mut core::ffi::c_void,
+        ) -> core::ffi::c_int;
+    };
+}
+
+use lzo_optimize_func_decl;
