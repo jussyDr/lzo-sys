@@ -1,18 +1,22 @@
-use crate::{
-    default_compress_impl, default_safe_decompress_impl, default_unsafe_decompress_impl,
-    default_worst_compress_size_impl,
-    sys::{
-        lzo1f_1_compress, lzo1f_999_compress, lzo1f_decompress, lzo1f_decompress_safe,
-        LZO1F_999_MEM_COMPRESS, LZO1F_MEM_COMPRESS,
-    },
+use core::{
+    ffi::{c_short, c_uchar},
+    mem::size_of,
 };
 
-default_worst_compress_size_impl!(worst_compress_size);
+use super::lzo_func_decl;
 
-default_unsafe_decompress_impl!(decompress, lzo1f_decompress);
+pub const LZO1F_MEM_COMPRESS: u32 = 16384 * size_of::<*mut c_uchar>() as u32;
 
-default_safe_decompress_impl!(decompress_safe, lzo1f_decompress_safe);
+pub const LZO1F_MEM_DECOMPRESS: u32 = 0;
 
-default_compress_impl!(compress_1, lzo1f_1_compress, LZO1F_MEM_COMPRESS);
+pub const LZO1F_999_MEM_COMPRESS: u32 = 5 * 16384 * size_of::<c_short>() as u32;
 
-default_compress_impl!(compress_999, lzo1f_999_compress, LZO1F_999_MEM_COMPRESS);
+extern "C" {
+    lzo_func_decl!(lzo1f_decompress);
+
+    lzo_func_decl!(lzo1f_decompress_safe);
+
+    lzo_func_decl!(lzo1f_1_compress);
+
+    lzo_func_decl!(lzo1f_999_compress);
+}

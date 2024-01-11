@@ -1,7 +1,14 @@
 [package]
-name = "lzo"
+name = "lzo-sys"
 version = "0.1.0"
+authors = ["Justin de Ruiter <justinderuiter@ziggo.nl>"]
 edition = "2021"
+rust-version = "1.66.1"
+description = "Raw bindings to the LZO compression library"
+repository = "https://github.com/jussyDr/lzo-sys"
+license = "GPL-2.0"
+keywords = ["lzo"]
+categories = ["compression", "external-ffi-bindings"]
 
 [build-dependencies]
 cmake = "0.1.50"

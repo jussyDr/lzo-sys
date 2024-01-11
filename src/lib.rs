@@ -1,6 +1,8 @@
-#![allow(clippy::missing_safety_doc)]
+#![no_std]
 
-mod sys;
+//! Raw bindings to the [LZO compression library](http://www.oberhumer.com/opensource/lzo/).
+//!
+//! Building requires `cmake`.
 
 pub mod lzo1;
 pub mod lzo1a;
@@ -11,98 +13,72 @@ pub mod lzo1x;
 pub mod lzo1y;
 pub mod lzo1z;
 pub mod lzo2a;
+pub mod lzo_asm;
+pub mod lzoconf;
 
-#[derive(Debug)]
-pub struct Error;
-
-macro_rules! default_worst_compress_size_impl {
+macro_rules! lzo_func_decl {
     ($name:ident) => {
-        pub const fn $name(src_len: usize) -> usize {
-            src_len + (src_len / 16) + 64 + 3
-        }
+        pub fn $name(
+            src: *const core::ffi::c_uchar,
+            src_len: core::ffi::c_ulonglong,
+            dst: *mut core::ffi::c_uchar,
+            dst_len: *mut core::ffi::c_ulonglong,
+            wrkmem: *mut core::ffi::c_void,
+        ) -> core::ffi::c_int;
     };
 }
 
-use default_worst_compress_size_impl;
+use lzo_func_decl;
 
-macro_rules! default_compress_impl {
-    ($name:ident, $sys_name:ident, $mem_size:expr) => {
-        pub fn $name<'a>(src: &[u8], dst: &'a mut [u8]) -> Result<&'a mut [u8], crate::Error> {
-            let mut dst_len = dst.len() as core::ffi::c_ulonglong;
-            let mut wrkmem = vec![0; $mem_size as usize];
-
-            let result = unsafe {
-                $sys_name(
-                    src.as_ptr(),
-                    src.len() as core::ffi::c_ulonglong,
-                    dst.as_mut_ptr(),
-                    &mut dst_len,
-                    wrkmem.as_mut_ptr() as *mut core::ffi::c_void,
-                )
-            };
-
-            if result.is_negative() {
-                return Err(crate::Error);
-            }
-
-            Ok(&mut dst[..dst_len as usize])
-        }
+macro_rules! lzo_compress_level_func_decl {
+    ($name:ident) => {
+        pub fn $name(
+            src: *const core::ffi::c_uchar,
+            src_len: core::ffi::c_ulonglong,
+            dst: *mut core::ffi::c_uchar,
+            dst_len: *mut core::ffi::c_ulonglong,
+            wrkmem: *mut core::ffi::c_void,
+            compression_level: core::ffi::c_int,
+        ) -> core::ffi::c_int;
     };
 }
 
-use default_compress_impl;
+use lzo_compress_level_func_decl;
 
-macro_rules! default_unsafe_decompress_impl {
-    ($name:ident, $sys_name:ident) => {
-        pub unsafe fn $name<'a>(
-            src: &[u8],
-            dst: &'a mut [u8],
-        ) -> Result<&'a mut [u8], crate::Error> {
-            let mut dst_len = core::mem::MaybeUninit::uninit();
+macro_rules! lzo_999_func_decls {
+    ($unsafe_name:ident, $level_name:ident, $safe_name:ident) => {
+        pub fn $unsafe_name(
+            src: *const core::ffi::c_uchar,
+            src_len: core::ffi::c_ulonglong,
+            dst: *mut core::ffi::c_uchar,
+            dst_len: *mut core::ffi::c_ulonglong,
+            wrkmem: *mut core::ffi::c_void,
+            dict: *const core::ffi::c_uchar,
+            dict_len: core::ffi::c_ulonglong,
+        ) -> core::ffi::c_int;
 
-            let result = $sys_name(
-                src.as_ptr(),
-                src.len() as core::ffi::c_ulonglong,
-                dst.as_mut_ptr(),
-                dst_len.as_mut_ptr(),
-                core::ptr::null_mut(),
-            );
+        pub fn $level_name(
+            src: *const core::ffi::c_uchar,
+            src_len: core::ffi::c_ulonglong,
+            dst: *mut core::ffi::c_uchar,
+            dst_len: *mut core::ffi::c_ulonglong,
+            wrkmem: *mut core::ffi::c_void,
+            dict: *const core::ffi::c_uchar,
+            dict_len: core::ffi::c_ulonglong,
+            cb: *mut crate::lzoconf::lzo_callback_t,
+            compression_level: core::ffi::c_int,
+        ) -> core::ffi::c_int;
 
-            if result.is_negative() {
-                return Err(crate::Error);
-            }
-
-            let dst_len = dst_len.assume_init();
-
-            Ok(&mut dst[..dst_len as usize])
-        }
+        pub fn $safe_name(
+            src: *const core::ffi::c_uchar,
+            src_len: core::ffi::c_ulonglong,
+            dst: *mut core::ffi::c_uchar,
+            dst_len: *mut core::ffi::c_ulonglong,
+            wrkmem: *mut core::ffi::c_void,
+            dict: *const core::ffi::c_uchar,
+            dict_len: core::ffi::c_ulonglong,
+        ) -> core::ffi::c_int;
     };
 }
 
-use default_unsafe_decompress_impl;
-
-macro_rules! default_safe_decompress_impl {
-    ($name:ident, $sys_name:ident) => {
-        pub fn $name<'a>(src: &[u8], dst: &'a mut [u8]) -> Result<&'a mut [u8], crate::Error> {
-            let mut dst_len = dst.len() as core::ffi::c_ulonglong;
-
-            let result = unsafe {
-                $sys_name(
-                    src.as_ptr(),
-                    src.len() as core::ffi::c_ulonglong,
-                    dst.as_mut_ptr(),
-                    &mut dst_len,
-                    core::ptr::null_mut(),
-                )
-            };
-
-            if result.is_negative() {
-                return Err(crate::Error);
-            }
-
-            Ok(&mut dst[..dst_len as usize])
-        }
-    };
-}
-
-use default_safe_decompress_impl;
+use lzo_999_func_decls;

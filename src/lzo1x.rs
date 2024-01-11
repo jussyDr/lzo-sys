@@ -1,61 +1,46 @@
-use core::ffi::c_int;
-use std::ptr::null_mut;
-
-use crate::{
-    default_compress_impl, default_safe_decompress_impl, default_unsafe_decompress_impl,
-    default_worst_compress_size_impl,
-    sys::{
-        lzo1x_1_11_compress, lzo1x_1_12_compress, lzo1x_1_15_compress, lzo1x_1_compress,
-        lzo1x_999_compress, lzo1x_999_compress_level, lzo1x_decompress, lzo1x_decompress_safe,
-        lzo1x_optimize, LZO1X_1_11_MEM_COMPRESS, LZO1X_1_12_MEM_COMPRESS, LZO1X_1_15_MEM_COMPRESS,
-        LZO1X_1_MEM_COMPRESS, LZO1X_999_MEM_COMPRESS,
-    },
+use core::{
+    ffi::{c_short, c_uchar},
+    mem::size_of,
 };
 
-default_worst_compress_size_impl!(worst_compress_size);
+use super::{lzo_999_func_decls, lzo_func_decl};
 
-default_unsafe_decompress_impl!(decompress, lzo1x_decompress);
+pub const LZO1X_MEM_COMPRESS: u32 = LZO1X_1_MEM_COMPRESS;
 
-default_safe_decompress_impl!(decompress_safe, lzo1x_decompress_safe);
+pub const LZO1X_MEM_DECOMPRESS: u32 = 0;
 
-default_compress_impl!(compress_1, lzo1x_1_compress, LZO1X_1_MEM_COMPRESS);
+pub const LZO1X_MEM_OPTIMIZE: u32 = 0;
 
-default_compress_impl!(compress_1_11, lzo1x_1_11_compress, LZO1X_1_11_MEM_COMPRESS);
+pub const LZO1X_1_MEM_COMPRESS: u32 = 16384 * size_of::<*mut c_uchar>() as u32;
 
-default_compress_impl!(compress_1_12, lzo1x_1_12_compress, LZO1X_1_12_MEM_COMPRESS);
+pub const LZO1X_1_11_MEM_COMPRESS: u32 = 2048 * size_of::<*mut c_uchar>() as u32;
 
-default_compress_impl!(compress_1_15, lzo1x_1_15_compress, LZO1X_1_15_MEM_COMPRESS);
+pub const LZO1X_1_12_MEM_COMPRESS: u32 = 4096 * size_of::<*mut c_uchar>() as u32;
 
-default_compress_impl!(compress_999, lzo1x_999_compress, LZO1X_999_MEM_COMPRESS);
+pub const LZO1X_1_15_MEM_COMPRESS: u32 = 32768 * size_of::<*mut c_uchar>() as u32;
 
-pub fn compress_level<'a>(
-    src: &[u8],
-    dst: &'a mut [u8],
-    dict: &mut [u8],
-    level: c_int,
-) -> Result<&'a mut [u8], crate::Error> {
-    let mut dst_len = dst.len() as core::ffi::c_ulonglong;
-    let mut wrkmem = vec![0; LZO1X_999_MEM_COMPRESS as usize];
+pub const LZO1X_999_MEM_COMPRESS: u32 = 14 * 16384 * size_of::<c_short>() as u32;
 
-    let result = unsafe {
-        lzo1x_999_compress_level(
-            src.as_ptr(),
-            src.len() as core::ffi::c_ulonglong,
-            dst.as_mut_ptr(),
-            &mut dst_len,
-            wrkmem.as_mut_ptr() as *mut core::ffi::c_void,
-            dict.as_mut_ptr(),
-            dict.len() as core::ffi::c_ulonglong,
-            null_mut(),
-            level,
-        )
-    };
+extern "C" {
+    lzo_func_decl!(lzo1x_decompress);
 
-    if result.is_negative() {
-        return Err(crate::Error);
-    }
+    lzo_func_decl!(lzo1x_decompress_safe);
 
-    Ok(&mut dst[..dst_len as usize])
+    lzo_func_decl!(lzo1x_1_compress);
+
+    lzo_func_decl!(lzo1x_1_11_compress);
+
+    lzo_func_decl!(lzo1x_1_12_compress);
+
+    lzo_func_decl!(lzo1x_1_15_compress);
+
+    lzo_func_decl!(lzo1x_999_compress);
+
+    lzo_999_func_decls!(
+        lzo1x_999_compress_dict,
+        lzo1x_999_compress_level,
+        lzo1x_999_compress_dict_safe
+    );
+
+    lzo_func_decl!(lzo1x_optimize);
 }
-
-default_unsafe_decompress_impl!(optimize, lzo1x_optimize);
