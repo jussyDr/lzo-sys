@@ -1,6 +1,6 @@
 [package]
 name = "lzo-sys"
-version = "0.3.1"
+version = "1.0.0"
 authors = ["Justin de Ruiter <justinderuiter@ziggo.nl>"]
 edition = "2021"
 rust-version = "1.66.1"
