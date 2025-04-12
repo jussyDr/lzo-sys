@@ -11,4 +11,4 @@ keywords = ["lzo"]
 categories = ["compression", "external-ffi-bindings"]
 
 [build-dependencies]
-cmake = "0.1.50"
+cmake = "0.1"
