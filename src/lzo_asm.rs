@@ -1,6 +1,6 @@
 use super::lzo_func_decl;
 
-extern "C" {
+unsafe extern "C" {
     lzo_func_decl!(lzo1c_decompress_asm);
 
     lzo_func_decl!(lzo1c_decompress_asm_safe);

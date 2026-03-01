@@ -6,8 +6,8 @@ use core::{
 };
 
 pub const LZO_VERSION: c_uint = 0x20a0;
-pub const LZO_VERSION_STRING: *const c_char = "2.10\0".as_ptr() as *const c_char;
-pub const LZO_VERSION_DATE: *const c_char = "Mar 01 2017\0".as_ptr() as *const c_char;
+pub const LZO_VERSION_STRING: *const c_char = c"2.10".as_ptr() as *const c_char;
+pub const LZO_VERSION_DATE: *const c_char = c"Mar 01 2017".as_ptr() as *const c_char;
 
 pub type lzo_compress_t = unsafe extern "C" fn(
     src: *const core::ffi::c_uchar,
@@ -87,21 +87,23 @@ pub const LZO_E_INTERNAL_ERROR: c_int = -99;
 
 #[allow(clippy::missing_safety_doc)]
 pub unsafe fn lzo_init() -> c_int {
-    __lzo_init_v2(
-        LZO_VERSION,
-        size_of::<c_short>() as c_int,
-        size_of::<c_int>() as c_int,
-        size_of::<c_long>() as c_int,
-        size_of::<u32>() as c_int,
-        size_of::<usize>() as c_int,
-        size_of::<*mut c_uchar>() as c_int,
-        size_of::<*mut c_char>() as c_int,
-        size_of::<*mut c_void>() as c_int,
-        size_of::<lzo_callback_t>() as c_int,
-    )
+    unsafe {
+        __lzo_init_v2(
+            LZO_VERSION,
+            size_of::<c_short>() as c_int,
+            size_of::<c_int>() as c_int,
+            size_of::<c_long>() as c_int,
+            size_of::<u32>() as c_int,
+            size_of::<usize>() as c_int,
+            size_of::<*mut c_uchar>() as c_int,
+            size_of::<*mut c_char>() as c_int,
+            size_of::<*mut c_void>() as c_int,
+            size_of::<lzo_callback_t>() as c_int,
+        )
+    }
 }
 
-extern "C" {
+unsafe extern "C" {
     fn __lzo_init_v2(
         v: c_uint,
         s1: c_int,

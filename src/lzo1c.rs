@@ -19,7 +19,7 @@ pub const LZO1C_99_MEM_COMPRESS: u32 = 65536 * size_of::<*mut c_uchar>() as u32;
 
 pub const LZO1C_999_MEM_COMPRESS: u32 = 5 * 16384 * size_of::<c_short>() as u32;
 
-extern "C" {
+unsafe extern "C" {
     lzo_compress_level_func_decl!(lzo1c_compress);
 
     lzo_func_decl!(lzo1c_decompress);

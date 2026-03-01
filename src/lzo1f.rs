@@ -11,7 +11,7 @@ pub const LZO1F_MEM_DECOMPRESS: u32 = 0;
 
 pub const LZO1F_999_MEM_COMPRESS: u32 = 5 * 16384 * size_of::<c_short>() as u32;
 
-extern "C" {
+unsafe extern "C" {
     lzo_func_decl!(lzo1f_decompress);
 
     lzo_func_decl!(lzo1f_decompress_safe);
